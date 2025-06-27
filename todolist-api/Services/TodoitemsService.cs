@@ -21,9 +21,9 @@ namespace todolist_api.Services
                 UserId = toDoItem.User.Id
             };
         }
-        private async Task<ToDoItem> MapToModelAsync(ToDoItemDto toDoItemDto)
+        private async Task<ToDoItem> MapToModelAsync(ToDoItemDto toDoItemDto, int userId)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == toDoItemDto.UserId)
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId)
                 ?? throw new ArgumentException("Nie znaleziono użytkownika");
             return new ToDoItem
             {
@@ -36,7 +36,7 @@ namespace todolist_api.Services
         }
         public async Task<ToDoItemDto> AddToDoItemAsync(ToDoItemDto toDoItemDto, int userId)
         {
-            var toDoItem = await MapToModelAsync(toDoItemDto);
+            var toDoItem = await MapToModelAsync(toDoItemDto, userId);
             await _context.ToDoItems.AddAsync(toDoItem);
             await _context.SaveChangesAsync();
 
@@ -68,6 +68,23 @@ namespace todolist_api.Services
 
             return [.. toDoItems.Select(MapToDto)];
         }
+
+       public async Task<ToDoItemDto> UpdateToDoItemAsync(int userId, ToDoItemDto toDoItemDto)
+        {
+            var existingToDoItem = await _context.ToDoItems
+                .Include(t => t.User)
+                .FirstOrDefaultAsync(t => t.Id == toDoItemDto.Id && t.User.Id == userId)
+                ?? throw new ArgumentException("Nie znaleziono zadania do wykonania");
+
+            existingToDoItem.Title = toDoItemDto.Title;
+            existingToDoItem.Description = toDoItemDto.Description;
+            existingToDoItem.Date = toDoItemDto.Date;
+
+            await _context.SaveChangesAsync();
+
+            return MapToDto(existingToDoItem);
+        }
+
         public async Task<bool> DeleteToDoItemAsync(int userId, int toDoItemId)
         {
             var toDoItem = await _context.ToDoItems

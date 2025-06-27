@@ -8,8 +8,6 @@ using todolist_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -18,6 +16,15 @@ builder.Services.AddControllers();
 var key = Environment.GetEnvironmentVariable("APPSETTINGS__KEY");
 if (string.IsNullOrEmpty(key))
     throw new InvalidOperationException("Brak APPSETTINGS__KEY w zmiennych środowiskowych");
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowVueApp",
+        builder => builder
+            .WithOrigins("http://localhost:5004")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -34,20 +41,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true
         };
 
-        options.Events = new JwtBearerEvents
-        {
-            OnChallenge = context =>
-            {
-                context.HandleResponse();
-                context.Response.StatusCode = 404;
-                return Task.CompletedTask;
-            },
-            OnForbidden = context =>
-            {
-                context.Response.StatusCode = 404;
-                return Task.CompletedTask;
-            }
-        };
+        // options.Events = new JwtBearerEvents
+        // {
+        //     OnChallenge = context =>
+        //     {
+        //         context.HandleResponse();
+        //         context.Response.StatusCode = 404;
+        //         return Task.CompletedTask;
+        //     },
+        //     OnForbidden = context =>
+        //     {
+        //         context.Response.StatusCode = 404;
+        //         return Task.CompletedTask;
+        //     }
+        // };
     });
 
 var TdlDbConnectionString = Environment.GetEnvironmentVariable("TODOLIST_DB_CONNECTION");
@@ -59,16 +66,17 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITodoitemsService, TodoitemsService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowVueApp");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();

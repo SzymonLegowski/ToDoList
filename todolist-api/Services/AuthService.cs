@@ -48,10 +48,24 @@ namespace todolist_api.Services
             return await CreateTokenResponse(user);
         }
 
+        public async Task<bool> LogoutAsync(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user is not null)
+            {
+                user.RefreshToken = null;
+                user.RefreshTokenExpirationDate = null;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
         private async Task<TokenResponseDto> CreateTokenResponse(User user)
         {
             return new TokenResponseDto
             {
+                UserId = user.Id,
                 AccessToken = CreateToken(user),
                 RefreshToken = await SaveRefreshTokenAsync(user)
             };

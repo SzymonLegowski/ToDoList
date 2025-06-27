@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using todolist_api.Dto;
 using todolist_api.Interfaces;
@@ -12,6 +14,9 @@ namespace todolist_api.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<User>> RegisterAsync(UserDto userDto)
         {
+            if (userDto.Username == "" || userDto.Password == "")
+                return BadRequest("Nazwa użytkownika i/lub hasło nie mogą być puste.");
+
             var user = await authService.RegisterAsync(userDto);
             if (user is null)
                 return BadRequest("Nazwa użytkownika jest w użyciu.");
@@ -37,6 +42,20 @@ namespace todolist_api.Controllers
                 return Unauthorized("Niepoprawny token odświeżania");
 
             return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> LogoutAsync()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var success = await authService.LogoutAsync(userId);
+            if (!success)
+            {
+                return BadRequest("Nie znaleziono użytkownika.");
+            }
+
+            return Ok("Wylogowano pomyślnie.");
         }
     }
 }

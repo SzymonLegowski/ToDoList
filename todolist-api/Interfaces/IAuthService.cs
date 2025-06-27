@@ -8,5 +8,6 @@ namespace todolist_api.Interfaces
         Task<User?> RegisterAsync(UserDto userDto);
         Task<TokenResponseDto?> LoginAsync(UserDto userDto);
         Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenRequestDto refreshTokenRequestDto);
+        Task<bool> LogoutAsync(int userId);
     }
 }

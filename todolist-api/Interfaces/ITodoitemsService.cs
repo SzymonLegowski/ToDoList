@@ -8,6 +8,7 @@ namespace todolist_api.Interfaces
         Task<ICollection<ToDoItemDto>> GetToDoItemsByUserIdAsync(int userId);
         Task<ICollection<ToDoItemDto>> GetToDoItemsByDateAsync(int userId, DateOnly date);
         Task<ToDoItemDto> GetToDoItemByIdAsync(int userId, int toDoItemId);
+        Task<ToDoItemDto> UpdateToDoItemAsync(int userId, ToDoItemDto toDoItemDto);
         Task<bool> DeleteToDoItemAsync(int userId, int toDoItemId);
 
     }
