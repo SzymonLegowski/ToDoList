@@ -17,6 +17,7 @@ export class HttpRequest {
                 config.data = data;
             }
             const response = await instance.request(config);
+            // console.log(await instance.request(config));
             return response.data;
             // const response = await instance.request({
             //     method: httpMethod,
@@ -25,11 +26,12 @@ export class HttpRequest {
             // });
             // return response.data;
         } catch (err) {
+            const message = err.response?.data || err.message || 'Nieznany błąd';
             this.emitter?.emit('alert', {
-                msg: err.response.data,
+                msg: message,
                 variant: 'error'
             })
-            throw err
+            console.log(err);
         }
     }
 }

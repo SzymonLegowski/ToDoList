@@ -5,12 +5,12 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
-import { TodoitemRepository } from './api/TodoitemRepository'
+import { TodoitemsRepository } from './api/TodoitemsRepository'
 import emitter from './eventBus'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-app.provide('TodoitemRepository', new TodoitemRepository(emitter));
+app.provide('TodoitemsRepository', new TodoitemsRepository(emitter));
 app.mount('#app')

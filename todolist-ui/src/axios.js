@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAuthStore } from "./stores/auth";
 
 const instance = axios.create({
-    baseURL: "http://localhost:5002/api",
+    baseURL: "http://localhost:5000/api/",
     withCredentials: false,
     headers: {
         'Content-Type': 'application/json',
@@ -43,7 +43,6 @@ instance.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-
     return Promise.reject(error);
   }
 );

@@ -10,11 +10,11 @@
       <button @click="$emit('create')" class="add-btn">Dodaj zadanie</button>
     </div>
 
-    <div v-if="filteredItems.length === 0" class="empty">
+    <!-- <div v-if="filteredItems.length === 0" class="empty">
       Brak zadań do wyświetlenia.
-    </div>
+    </div> -->
 
-    <div v-else class="items">
+    <div class="items">
       <div v-for="(item, index) in filteredItems" :key="index" class="todo-card">
         <div class="content">
           <h3 class="title">{{ item.title }}</h3>
@@ -47,7 +47,6 @@ const selectedDate = ref('');
 
 const filteredItems = computed(() => {
   if (!selectedDate.value) return props.todoItems;
-
   return props.todoItems.filter(item => {
     const itemDate = new Date(item.date).toISOString().split('T')[0];
     return itemDate === selectedDate.value;

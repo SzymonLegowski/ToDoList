@@ -29,12 +29,11 @@ const username = localStorage.getItem('username');
 const todoitem = ref(null);
 const todoitems = ref([]);
 const component = ref("list");
-const TodoitemRepository = inject('TodoitemRepository');
+const TodoitemsRepository = inject('TodoitemsRepository');
 const isEditMode = ref(false);
 
 onMounted(async () => {
-    todoitems.value = await TodoitemRepository.getAll(); 
-    console.log("students",todoitems.value);
+    todoitems.value = await TodoitemsRepository.getAll(); 
 });
 const selectedComponent = computed(() => {
     return component.value === "list" ? TodoItemList : TodoItemForm;
@@ -53,7 +52,7 @@ function editTodoitem(tdi){
 }
 
 async function deleteTodoitem(tdi){
-  await TodoitemRepository.delete(tdi.id);
+  await TodoitemsRepository.delete(tdi.id);
   let index = todoitems.value.findIndex(t => t.id === tdi.id);
   todoitem.value = null;
   todoitems.value.splice(index, 1);
@@ -66,7 +65,7 @@ async function deleteTodoitem(tdi){
 async function submitForm(tdi){
   if(todoitem.value?.id)
   {
-    await TodoitemRepository.update(todoitem.value.id, tdi);
+    await TodoitemsRepository.update(todoitem.value.id, tdi);
     let index = todoitems.value.findIndex(tdi => tdi.id === todoitem.value.id);
     todoitems.value[index]=Object.assign(tdi, { id: todoitem.value.id});
     emitter.emit('alert', {
@@ -77,7 +76,7 @@ async function submitForm(tdi){
   }
   else
   {
-    let createdTodoitem = await TodoitemRepository.add(tdi);
+    let createdTodoitem = await TodoitemsRepository.add(tdi);
     todoitems.value.push(createdTodoitem);
     todoitem.value = createdTodoitem;
     emitter.emit('alert', {

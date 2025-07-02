@@ -26,6 +26,7 @@ export const useAuthStore = defineStore('auth', () =>{
             router.push({name: 'dashboard'})
         }
         catch(err){
+            console.log(err);
             console.log(err.response.data);
             emitter.emit('alert', {
                 msg: err.response.data,
@@ -46,9 +47,10 @@ export const useAuthStore = defineStore('auth', () =>{
             user.value = '';
             router.push({name: 'auth'});
         }catch(err){
-            console.log(err.response.data);
+            const message = err.response?.data || err.message || 'Nieznany błąd';
+            console.log(err);
             emitter.emit('alert', {
-                msg: err.response.data,
+                msg: message,
                 variant: 'error'
             })
         }
