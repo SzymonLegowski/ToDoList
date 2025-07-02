@@ -8,7 +8,7 @@ namespace todolist_api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TodoitemController(ITodoitemsService todoitemsService) : ControllerBase
+    public class TodoitemsController(ITodoitemsService todoitemsService) : ControllerBase
     {
         private readonly ITodoitemsService _todoitemsService = todoitemsService;
 

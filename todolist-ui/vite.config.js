@@ -16,6 +16,11 @@ export default defineConfig({
     },
   },
   server:{
-    port: 5004,
-  }
+    port: 5005,
+  },
+  build: {
+    outDir: '../todolist-api/wwwroot',
+    emptyOutDir: true,
+    minify: false
+  },
 })

@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using todolist_api.Data;
@@ -21,7 +22,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowVueApp",
         builder => builder
-            .WithOrigins("http://localhost:5004")
+            .WithOrigins("http://localhost:5005")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -75,12 +76,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+// app.UseHttpsRedirection();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
+app.UseRouting();
 app.UseCors("AllowVueApp");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseHttpsRedirection();
 app.MapControllers();
+app.MapFallbackToFile("index.html");
 
 app.Run();
 
