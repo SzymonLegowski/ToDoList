@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: todolist-db
+    environment:
+      POSTGRES_USER: admintdl
+      POSTGRES_PASSWORD: passwordtdl
+      POSTGRES_DB: todolist_database
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+    
+  web:
+    build: .
+    container_name: todolist-app
+    ports:
+      - "5000:5000"
+    environment:
+      APPSETTINGS__KEY: E07MEoqf/JiWN7DCYzba4cXL824jiTMAuliT8M6omdzMXi9+J+3bwC4zkWifyy/Xaz8N6upTf/CjZyRy3bfhCQ==
+      TODOLIST_DB_CONNECTION: Host=db;Port=5432;Username=admintdl;Password=passwordtdl;Database=todolist_database
+    depends_on:
+      - db
+    
+volumes:
+  db-data:
