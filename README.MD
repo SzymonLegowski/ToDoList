@@ -1,6 +1,6 @@
 # ToDoList
 
-Simple "todo list" app.
+Simple "todo list" app that uses JWT authentication, vue 3 and asp.net core with entity framework. 
 
 # How to run with docker
 
